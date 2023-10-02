@@ -1,0 +1,32 @@
+[
+  {
+    "user": "bela123",
+    "message": "Jo napom van",
+    "createdAt": "2023-09-15T15:12:24.671Z"
+  },
+  {
+    "user": "lajos456",
+    "message": "Nekem is",
+    "createdAt": "2023-09-15T15:15:24.671Z"
+  },
+  {
+    "user": "bela123",
+    "message": "Tobbiek?",
+    "createdAt": "2023-09-15T15:16:24.671Z"
+  },
+  {
+    "user": "kazmer789",
+    "message": "Nekem is!",
+    "createdAt": "2023-09-15T17:12:24.671Z"
+  },
+  {
+    "user": "greg1988",
+    "message": "Hello World",
+    "createdAt": "2023-10-02T18:13:16.708Z"
+  },
+  {
+    "user": "greg1988",
+    "message": "Hello World",
+    "createdAt": "2023-10-02T18:15:32.710Z"
+  }
+]
