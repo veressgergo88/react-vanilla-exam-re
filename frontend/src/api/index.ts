@@ -15,16 +15,16 @@ const getMessages = async (since?: string): Promise<AxiosResponse | null> => {
   }
 }
 
-const MessageResponse = z.object({
+const MessageSchema = z.object({
   user: z.string(),
   message: z.string(),
   createdAt: z.string().datetime({ offset: true })
-}).array()
+})
 
-type MessageResponse = z.infer<typeof MessageResponse>
+export type Message = z.infer<typeof MessageSchema>
 
-const validateMessages = (response: AxiosResponse): MessageResponse | null => {
-  const result = MessageResponse.safeParse(response.data)
+const validateMessages = (response: AxiosResponse): Message[] | null => {
+  const result = MessageSchema.array().safeParse(response.data)
   if (!result.success) {
     return null
   }
@@ -40,7 +40,7 @@ type Response<Type> = {
   success: false
 }
 
-export const loadMessages = async (title?: string): Promise<Response<MessageResponse>> => {
+export const loadMessages = async (title?: string): Promise<Response<Message[]>> => {
   const response = await getMessages(title)
   if (!response)
     return { success: false, status: 0  }

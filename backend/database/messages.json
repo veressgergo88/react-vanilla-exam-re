@@ -28,5 +28,15 @@
     "user": "greg1988",
     "message": "Hello World",
     "createdAt": "2023-10-02T18:15:32.710Z"
+  },
+  {
+    "user": "greg1988",
+    "message": "Sziasztok",
+    "createdAt": "2023-10-04T18:18:25.882Z"
+  },
+  {
+    "user": "greg1988",
+    "message": "Sziasztok",
+    "createdAt": "2023-10-04T18:18:55.965Z"
   }
 ]
