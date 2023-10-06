@@ -1,14 +1,13 @@
 import axios, { AxiosError, AxiosResponse } from "axios"
 import { z } from "zod"
 
-export const client = axios.create({
+const client = axios.create({
   baseURL: "http://localhost:8080"
 })
 
-const getMessages = async (since?: string): Promise<AxiosResponse | null> => {
+const _postMessage = async (user: string, message: string): Promise<AxiosResponse | null> => {
   try {
-    const params = since ? { since } : { }
-    const response = await client.get("/api/messages", { params })
+    const response = await client.post("/api/messages", { "user": user, "message": message })
     return response
   } catch (error) {
     return (error as AxiosError).response || null
@@ -23,8 +22,8 @@ const MessageSchema = z.object({
 
 export type Message = z.infer<typeof MessageSchema>
 
-const validateMessages = (response: AxiosResponse): Message[] | null => {
-  const result = MessageSchema.array().safeParse(response.data)
+const validateMessage = (response: AxiosResponse): Message | null => {
+  const result = MessageSchema.safeParse(response.data)
   if (!result.success) {
     return null
   }
@@ -40,13 +39,13 @@ type Response<Type> = {
   success: false
 }
 
-export const loadMessages = async (title?: string): Promise<Response<Message[]>> => {
-  const response = await getMessages(title)
+export const postMessage = async (user: string, message: string): Promise<Response<Message>> => {
+  const response = await _postMessage(user, message)
   if (!response)
     return { success: false, status: 0  }
   if (response.status !== 200)
     return { success: false, status: response.status  }
-  const data = validateMessages(response)
+  const data = validateMessage(response)
   if (!data)
     return { success: false, status: response.status  }
   return { success: true, status: response.status, data }
