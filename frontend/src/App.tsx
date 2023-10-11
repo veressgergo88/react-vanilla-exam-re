@@ -11,6 +11,15 @@ function App() {
   const [username, setUsername] = useState<string>("")
   const [userMessage, setUserMessage] = useState<string>("")
   const [is503, setIs503] = useState(false)
+  const [isDisabled, setIsDisabled] = useState(false)
+  
+  type Opacity = {
+    opacity : string
+  }
+
+  const buttonOpacity: Opacity = {
+    opacity : isDisabled ? '0.5' : '1'
+  }
 
   const loadMessagesHandler = async () => {
     setLoading(true)
@@ -35,16 +44,26 @@ function App() {
   }, [])
 
   let submit = async () => {
-    const response = await postMessage(username, userMessage)
-    if (response.status === 503)
-      setIs503(true)
-      setTimeout(() => setIs503(false) ,1000)
+    if(username && userMessage){
+      setIsDisabled(true)
+      const response = await postMessage(username, userMessage)
+      setIsDisabled(false)
+      if (response.success) {
+        setMessages([...messages, response.data])
+      } else {  
+        if (response.status === 503){
+          setIs503(true)
+          setTimeout(() => setIs503(false) ,1000)
+        }
+      }
+    }
+    setUsername("")
+    setUserMessage("")
   }
 
   return (
     <div className="card w-96 shadow-xl flex flex-col items-center ">
       <div>
-      <Button content="Gomb"/>
       {loading && <p>...Loading</p>}
       <h1>{error}</h1>
       <ul>
@@ -65,7 +84,7 @@ function App() {
           <input type="text" placeholder="Message" value = {userMessage} onChange={(e) => setUserMessage(e.target.value)}/>
         </div>
         <div>
-          <button onClick={submit}>Send Message</button>
+          <button style={buttonOpacity} disabled={isDisabled} onClick={submit}><Button content="Send message"/></button>
         </div>
           {is503 && 
           <p>Sorry! Try Again!</p>}
