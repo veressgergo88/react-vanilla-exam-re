@@ -1,25 +1,24 @@
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { loadMessages, Message } from "./api";
 import { postMessage } from "./api/post";
 import Button from "./component/Button";
 
 function App() {
+  type SendMessage = {
+    userName: string,
+    userMessage: string
+    createdAt: string
+    status: "success" | "error" | "pending"
+  }
+
   const [messages, setMessages] = useState<Message[]>([]);
+  const [sentMessages, setSentMessages] = useState<SendMessage[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [username, setUsername] = useState<string>("")
   const [userMessage, setUserMessage] = useState<string>("")
   const [is503, setIs503] = useState(false)
-  const [isDisabled, setIsDisabled] = useState(false)
-  
-  type Opacity = {
-    opacity : string
-  }
-
-  const buttonOpacity: Opacity = {
-    opacity : isDisabled ? '0.5' : '1'
-  }
 
   const loadMessagesHandler = async () => {
     setLoading(true)
@@ -40,15 +39,23 @@ function App() {
     return () => {
       clearInterval(messageInternal)
     } 
-
   }, [])
 
   let submit = async () => {
     if(username && userMessage){
-      setIsDisabled(true)
+      const date = new Date().toISOString()
+      const newMessage: SendMessage = {
+        userName: username,
+        userMessage: userMessage,
+        createdAt: date,
+        status: "pending"
+      }
+      setSentMessages([...sentMessages,newMessage])
+      
       const response = await postMessage(username, userMessage)
-      setIsDisabled(false)
+      
       if (response.success) {
+        
         setMessages([...messages, response.data])
       } else {  
         if (response.status === 503){
@@ -69,11 +76,9 @@ function App() {
       <ul>
         {messages.map((message, index) => (
           <li key={index}>
-            <div>
               <p>{message.user}</p>
               <p>{message.message}</p>
               <p>{message.createdAt}</p>  
-            </div> 
           </li>
         ))}
       </ul>
@@ -84,7 +89,7 @@ function App() {
           <input type="text" placeholder="Message" value = {userMessage} onChange={(e) => setUserMessage(e.target.value)}/>
         </div>
         <div>
-          <button style={buttonOpacity} disabled={isDisabled} onClick={submit}><Button content="Send message"/></button>
+          <button onClick={submit}><Button content="Send message"/></button>
         </div>
           {is503 && 
           <p>Sorry! Try Again!</p>}
